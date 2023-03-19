@@ -8,7 +8,7 @@ do
   echo "###### $i crontab is:"
   crontab -u $i -l
   
-done >> /home/default/Documents/cronjobs.txt
+done >> cronjobs.txt
 
 }
 
