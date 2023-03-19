@@ -16,9 +16,11 @@ else
 	config=/etc/apache2/apache2.conf && echo "[info] No parameter given, configuration file assumed to be $config"
 fi
 
+echo $config
+
 backup=${config}.before_launching_flawless-hedgehog
-cp $config $backup && echo -e "[info] Making a backup of your configuration file as  -->   ${backup}\n"
-echo -e "\n# Security directives added by flawless-hedgehog.sh on $(date)" >> $config
+cp $config $backup && echo "[info] Making a backup of your configuration file as  -->   ${backup}\n"
+echo "\n# Security directives added by flawless-hedgehog.sh on $(date)" >> $config
 
 
 #echo '          .:::::::::.   '
@@ -27,131 +29,131 @@ echo -e "\n# Security directives added by flawless-hedgehog.sh on $(date)" >> $c
 #echo '       o__,_::::::::::° '
 
 
-echo -e "\n\n Information leakage"
+echo "\n\n Information leakage"
 echo "##################################################"
 
 # hide server signature
-read -p $'\n'"Disable server signature on error pages ? (y/n):" ans
+read -p "Disable server signature on error pages ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	echo 'ServerSignature Off' >> $config && echo "Disabling server signature on error pages: Directive 'ServerSignature' set to off."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Disable server signature on error pages ? (y/n):" ans
+	read -p  "Disable server signature on error pages ? (y/n):" ans
 fi
 
 
 # hide version in HTTP header
-read -p $'\n'"Hide Apache version in HTTP response header ? (y/n):" ans
+read -p  "Hide Apache version in HTTP response header ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	echo 'ServerTokens Prod' >> $config && echo "Hidding Apache version in HTTP response header: Directive 'ServerTokens' set to Production mode."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Hide Apache version in HTTP response header ? (y/n):" ans
+	read -p  "Hide Apache version in HTTP response header ? (y/n):" ans
 fi
 
 
 # disable etag header
-read -p $'\n'"Disable Etag header ? (a remote attacker could obtain informations on your system) (y/n):" ans
+read -p  "Disable Etag header ? (a remote attacker could obtain informations on your system) (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	echo 'FileETag None' >> $config && echo "Disabling Etag response header: Directive 'FileETag' set to None."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Disable Etag header ? (a remote attacker could obtain informations on your system) (y/n):" ans
+	read -p  "Disable Etag header ? (a remote attacker could obtain informations on your system) (y/n):" ans
 fi
 
 
 
-echo -e "\n\n Exploration"
+echo "\n\n Exploration"
 echo "##################################################"
 
 # disable directory listing
-read -p $'\n'"Disable directory listing ? (y/n):" ans
+read -p  "Disable directory listing ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	sed -i 's/ Indexes//g' $config && echo "Disabling directory listing: Removed parameter 'Indexes' from directive 'Options' for all directories."
 	echo "# removed parameter 'Indexes' from directive 'Options' for all directories" >> $config
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Disable directory listing ? (y/n):" ans
+	read -p  "Disable directory listing ? (y/n):" ans
 fi
 
 
 
-echo -e "\n\n Authentication bypass"
+echo "\n\n Authentication bypass"
 echo "##################################################"
 
 # restrict method to get post head
-read -p $'\n'"Restrict HTTP methods to GET, POST and HEAD ? (protect you from verb tampering attack if you plan to set basic authentication on your server later) (y/n):" ans
+read -p  "Restrict HTTP methods to GET, POST and HEAD ? (protect you from verb tampering attack if you plan to set basic authentication on your server later) (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	sed -i 's@<Directory /var/www/>@<Directory /var/www/>\n\t<LimitExcept GET POST HEAD>\n\t\tdeny from all\n\t</LimitExcept>@g' $config && echo "HTTP method restricted to GET, POST and HEAD."
 	echo "# http method restricted to GET, POST and HEAD for directory /var/www" >> $config
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Restrict HTTP methods to GET, POST and HEAD ? (protect you from verb tampering attack if you plan to set basic authentication on your server later) (y/n):" ans
+	read -p  "Restrict HTTP methods to GET, POST and HEAD ? (protect you from verb tampering attack if you plan to set basic authentication on your server later) (y/n):" ans
 fi
 
 
 
-echo -e "\n\n XSS, XST, Clickjacking"
+echo "\n\n XSS, XST, Clickjacking"
 echo "##################################################"
 
 # set cookie with HttpOnly and Secure flag
-read -p $'\n'"Set cookie with HttpOnly and Secure flag ? (y/n):" ans
+read -p  "Set cookie with HttpOnly and Secure flag ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	a2enmod headers
 	echo 'Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure' >> $config && echo "Added 'HttpOnly' and 'Secure' flag to cookies emitted by the server."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Set cookie with HttpOnly and Secure flag ? (y/n):" ans
+	read -p  "Set cookie with HttpOnly and Secure flag ? (y/n):" ans
 fi
 
 
 # add header X-XSS-Protection
-read -p $'\n'"Add header X-XSS-Protection ? (y/n):" ans
+read -p  "Add header X-XSS-Protection ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	a2enmod headers
 	echo 'Header set X-XSS-Protection "1; mode=block"' >> $config && echo "Added X-XSS-Protection header."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Add header X-XSS-Protection ? (y/n):" ans
+	read -p  "Add header X-XSS-Protection ? (y/n):" ans
 fi
 
 
 # disable trace method
-read -p $'\n'"Disable TRACE method ? (y/n):" ans
+read -p  "Disable TRACE method ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	echo 'TraceEnable off' >> $config && echo "Disabling TRACE method: Directive 'TraceEnable' set to off."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Disable TRACE method ? (y/n):" ans
+	read -p  "Disable TRACE method ? (y/n):" ans
 fi
 
 
 # enable X-Frame-Options header
-read -p $'\n'"Enable X-Frame-Options header ? (y/n):" ans
+read -p  "Enable X-Frame-Options header ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	a2enmod headers
 	echo 'Header always append X-Frame-Options SAMEORIGIN' >> $config && echo "Enabling X-Frame-Options header: header value set to 'SAMEORIGIN'."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
 	echo "Endach says NO!"
 else
-	read -p $'\n'"Enable X-Frame-Options header ? (y/n):" ans
+	read -p  "Enable X-Frame-Options header ? (y/n):" ans
 fi
 
 
 
-echo -e "\n\n DDoS (Slowloris)"
+echo "\n\n DDoS (Slowloris)"
 echo "##################################################"
 
 # decrease timeout value from 300 to 40
-read -p $'\n'"Decrease the value of 'Timeout' directive from 300 to 40 ? (y/n):" ans
+read -p  "Decrease the value of 'Timeout' directive from 300 to 40 ? (y/n):" ans
 if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
 	echo 'ServerSignature Off' >> $config && echo "Disabling server signature on error pages: Directive 'ServerSignature' set to off."
 elif [ "$ans" = "n" ] || [ "$ans" = "N" ]; then
@@ -166,18 +168,17 @@ fi
 
 
 
-echo -e "\n[info] Restarting Apache server ...\n"
+echo  "\n[info] Restarting Apache server ...\n"
 service apache2 restart
 service apache2 status
 
 clear
-echo -e "Little hedgehog fluffed his spikes, your Apache configuration now has a first minimal layer of security !\n"
+echo  "Little hedgehog fluffed his spikes, your Apache configuration now has a first minimal layer of security !\n"
 
 echo '          ./////////.   '
 echo '         /////////////  '
 echo '        /. `/////////// '
 echo '       o__,_//////////° '
 
-echo -e "\nIf you feel like I messed up your configuration, don't panic and run :\nsudo cp $backup $config"
-echo -e "\nRegards (^~^)"
-
+echo  "\nIf you feel like I messed up your configuration, don't panic and run :\nsudo cp $backup $config"
+echo  "\nRegards (^~^)"
