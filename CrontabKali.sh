@@ -11,11 +11,16 @@ sudo chmod 777 cronjobs.txt
 
 for i in `cat user_list.txt`
 do
-  echo "###### $i crontab is:"
+ # echo "###### $i crontab is:"
   crontab -u $i -l
   
 done >> cronjobs.txt
 
+cat cronjobs.txt | grep -v "^#"
+rm cronjobs.txt
+#rm crontab.sh
+
 }
+
 
 check_crontab_func
