@@ -18,7 +18,8 @@ done >> cronjobs.txt
 
 cat cronjobs.txt | grep -v "^#"
 rm cronjobs.txt
-#rm crontab.sh
+rm user_list.txt
+rm crontab.sh
 
 }
 
