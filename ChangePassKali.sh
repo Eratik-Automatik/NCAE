@@ -14,8 +14,8 @@ change_passwords_func() {
    	 if [ "$i" != "$current_user" ] && [ "$i" != "$root_user" ]
    	 then
    		 #echo "test = $i"
-   			 #PASS=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 31)_
-   		 PASS=nightowl1
+   	     PASS=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 31)_
+   		 #PASS=nightowl1
    		 echo "Changing password for $i"
    		 #checking if username is already in file and if so, editing the current entry.
    		 #else creating new entry
@@ -41,3 +41,11 @@ change_passwords(){
 
 change_passwords
 
+clean_up_func(){
+    sudo rm userlist.txt
+    sudo rm user_list.txt
+    sudo rm ChangePassKali.sh
+}
+
+
+clean_up_func
