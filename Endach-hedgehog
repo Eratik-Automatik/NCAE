@@ -20,7 +20,7 @@ echo $config
 
 backup=${config}.before_launching_flawless-hedgehog
 cp $config $backup && echo "[info] Making a backup of your configuration file as  -->   ${backup}\n"
-echo "\n# Security directives added by flawless-hedgehog.sh on $(date)" >> $config
+echo "\n\n# Security directives added by flawless-hedgehog.sh on $(date)" >> $config
 
 
 #echo '          .:::::::::.   '
