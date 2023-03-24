@@ -45,6 +45,7 @@ clean_up_func(){
     sudo rm userlist.txt
     sudo rm user_list.txt
     sudo rm ChangePassKali.sh
+    echo "Password Change Complete, Please test"
 }
 
 
