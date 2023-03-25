@@ -3,8 +3,8 @@ list_users_func () {
 }
 
 change_passwords_func() {
-    root_user="root"
-    current_user="default"
+    root_user="nightowl"
+    current_user="nightowl2"
     echo $current_user
     echo $root_user
     FILE="userlist.txt"
